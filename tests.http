@@ -1,0 +1,9 @@
+# Toggle door
+POST http://localhost:8000/toggle
+x-api-key: test
+
+###
+
+# Get door status
+GET http://localhost:8000/state
+x-api-key: test
