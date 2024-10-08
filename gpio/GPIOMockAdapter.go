@@ -15,7 +15,7 @@ type GPIOMockAdapter struct {
 	closedState    bool
 }
 
-func NewGPIOMockAdapter(togglePin, openPin, closedPin int) *GPIOMockAdapter {
+func NewGPIOMockAdapter(togglePin int, openPin int, closedPin int) *GPIOMockAdapter {
 	log.Info().Msg("Mock GPIO: Creating mock GPIO adapter")
 	return &GPIOMockAdapter{
 		togglePin:   togglePin,

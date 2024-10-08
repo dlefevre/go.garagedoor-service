@@ -15,7 +15,6 @@ func init() {
 }
 
 func TestInitialState(t *testing.T) {
-	config := config.GetConfigService()
 	gpio := NewGPIOMockAdapter(config.GetTogglePin(), config.GetOpenPin(), config.GetClosedPin())
 	if open, err := gpio.ReadOpenPin(); err != nil || open {
 		t.Fatalf("Expected open pin to be false, got %v", open)
@@ -41,7 +40,6 @@ func toggleHelper(t *testing.T, gpio *GPIOMockAdapter, expectedOpen bool, expect
 }
 
 func TestToggle(t *testing.T) {
-	config := config.GetConfigService()
 	gpio := NewGPIOMockAdapter(config.GetTogglePin(), config.GetOpenPin(), config.GetClosedPin())
 	toggleHelper(t, gpio, true, false)
 	toggleHelper(t, gpio, false, true)
