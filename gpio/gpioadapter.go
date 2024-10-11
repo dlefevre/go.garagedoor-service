@@ -6,6 +6,7 @@ type GPIOAdapter interface {
 	WriteTogglePin(value bool) error
 	ReadOpenPin() (bool, error)
 	ReadClosedPin() (bool, error)
+	Reset() error
 }
 
 func GetGPIOAdapter() GPIOAdapter {

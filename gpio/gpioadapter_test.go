@@ -44,3 +44,17 @@ func TestToggle(t *testing.T) {
 	toggleHelper(t, gpio, true, false)
 	toggleHelper(t, gpio, false, true)
 }
+
+func TestReset(t *testing.T) {
+	gpio := NewGPIOMockAdapter(config.GetTogglePin(), config.GetOpenPin(), config.GetClosedPin())
+	toggleHelper(t, gpio, true, false)
+	if err := gpio.Reset(); err != nil {
+		t.Fatalf("Error resetting pins: %v", err)
+	}
+	if open, err := gpio.ReadOpenPin(); err != nil || open {
+		t.Fatalf("Expected open pin to be false, got %v", open)
+	}
+	if closed, err := gpio.ReadClosedPin(); err != nil || !closed {
+		t.Fatalf("Expected closed pin to be true, got %v", closed)
+	}
+}

@@ -67,6 +67,15 @@ func newDoorControllerService() *DoorControllerServiceImpl {
 	}
 }
 
+// Reset GPIO Adapter and state.
+func (d *DoorControllerServiceImpl) Reset() {
+	d.lock.Lock()
+	defer d.lock.Unlock()
+	d.adapter.Reset()
+	d.state = STATE_UNKNOWN
+}
+
+// Main loop for handling commands.
 func (d *DoorControllerServiceImpl) commandLoop() {
 	defer d.wg.Done()
 
@@ -86,6 +95,7 @@ func (d *DoorControllerServiceImpl) commandLoop() {
 	log.Info().Msg("commandLoop exiting")
 }
 
+// Main loop for reading and broadcasting the state of the garagedoor.
 func (d *DoorControllerServiceImpl) stateLoop() {
 	defer d.wg.Done()
 
@@ -102,6 +112,7 @@ func (d *DoorControllerServiceImpl) stateLoop() {
 	log.Info().Msg("stateLoop exiting")
 }
 
+// Start All goroutines.
 func (d *DoorControllerServiceImpl) Start() {
 	d.lock.Lock()
 	defer d.lock.Unlock()
@@ -113,6 +124,7 @@ func (d *DoorControllerServiceImpl) Start() {
 	d.wg.Add(2)
 }
 
+// Stop all goroutines, gracefully.
 func (d *DoorControllerServiceImpl) Stop() {
 	d.lock.Lock()
 	d.running = false
@@ -124,24 +136,30 @@ func (d *DoorControllerServiceImpl) Stop() {
 	log.Info().Msg("DoorControllerService stopped")
 }
 
+// Put a toggle command on the command queue
 func (d *DoorControllerServiceImpl) RequestToggle() {
 	d.command <- CMD_TOGGLE
 }
 
+// Put a state update request on the command queue
 func (d *DoorControllerServiceImpl) RequestState() {
 	d.command <- CMD_STATE
 }
 
+// Get the current state of the garagedoor.
 func (d *DoorControllerServiceImpl) GetStateStr() string {
 	return d.stateStr()
 }
 
+// Add a listerer for state changes. When added, no initial state is sent.
+// If an update is needed, RequestState() should be called.
 func (d *DoorControllerServiceImpl) AddStateListener(handler func(string)) {
 	d.lock.Lock()
 	defer d.lock.Unlock()
 	d.stateListeners = append(d.stateListeners, handler)
 }
 
+// Generate a string representation of the current state.
 func (d *DoorControllerServiceImpl) stateStr() string {
 	d.lock.RLock()
 	defer d.lock.RUnlock()
@@ -155,18 +173,21 @@ func (d *DoorControllerServiceImpl) stateStr() string {
 	}
 }
 
+// Check if the object's state differs from the given state.
 func (d *DoorControllerServiceImpl) stateDiffers(state Enum) bool {
 	d.lock.RLock()
 	defer d.lock.RUnlock()
 	return d.state != state
 }
 
+// Set the object's state to the given state.
 func (d *DoorControllerServiceImpl) setState(state Enum) {
 	d.lock.Lock()
 	defer d.lock.Unlock()
 	d.state = state
 }
 
+// Broadcast the current state to all listeners.
 func (d *DoorControllerServiceImpl) broadcastState() {
 	d.lock.RLock()
 	defer d.lock.RUnlock()
@@ -175,6 +196,7 @@ func (d *DoorControllerServiceImpl) broadcastState() {
 	}
 }
 
+// Toggle the garagedoor.
 func (d *DoorControllerServiceImpl) toggle() {
 	d.adapter.WriteTogglePin(true)
 	time.Sleep(250 * time.Millisecond)
@@ -182,6 +204,7 @@ func (d *DoorControllerServiceImpl) toggle() {
 	time.Sleep(250 * time.Millisecond)
 }
 
+// Read the current state from the two pins connected to the magnetic switches.
 func (d *DoorControllerServiceImpl) readCurrentState() Enum {
 	open, err := d.adapter.ReadOpenPin()
 	if err != nil {

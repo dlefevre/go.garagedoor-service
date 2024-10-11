@@ -46,3 +46,10 @@ func (g *GPIOMockAdapter) ReadClosedPin() (bool, error) {
 	log.Info().Msg(fmt.Sprintf("Mock GPIO: Reading from pin %d: %v", g.closedPin, g.closedState))
 	return g.closedState, nil
 }
+
+func (g *GPIOMockAdapter) Reset() error {
+	log.Info().Msg("Mock GPIO: Resetting pins")
+	g.openState = false
+	g.closedState = true
+	return nil
+}

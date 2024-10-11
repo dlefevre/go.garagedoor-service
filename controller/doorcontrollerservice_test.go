@@ -23,6 +23,7 @@ func TestCreateDoorController(t *testing.T) {
 
 func TestStartStop(t *testing.T) {
 	controller := GetDoorControllerService()
+	controller.Reset()
 	controller.Start()
 	time.Sleep(1 * time.Second)
 	controller.Stop()
@@ -30,6 +31,7 @@ func TestStartStop(t *testing.T) {
 
 func TestRestart(t *testing.T) {
 	controller := GetDoorControllerService()
+	controller.Reset()
 	controller.Start()
 	time.Sleep(1 * time.Second)
 	controller.Stop()
@@ -40,6 +42,7 @@ func TestRestart(t *testing.T) {
 
 func TestToggle(t *testing.T) {
 	controller := GetDoorControllerService()
+	controller.Reset()
 	controller.Start()
 
 	time.Sleep(1 * time.Second)
@@ -58,6 +61,7 @@ func TestToggle(t *testing.T) {
 
 func TestListener(t *testing.T) {
 	controller := GetDoorControllerService()
+	controller.Reset()
 	controller.Start()
 
 	state := ""
