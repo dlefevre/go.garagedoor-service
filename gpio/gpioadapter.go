@@ -3,10 +3,10 @@ package gpio
 import "github.com/dlefevre/go.garagedoor-service/config"
 
 type GPIOAdapter interface {
-	WriteTogglePin(value bool) error
-	ReadOpenPin() (bool, error)
-	ReadClosedPin() (bool, error)
-	Reset() error
+	WriteTogglePin(value bool)
+	ReadOpenPin() bool
+	ReadClosedPin() bool
+	Reset()
 }
 
 func GetGPIOAdapter() GPIOAdapter {

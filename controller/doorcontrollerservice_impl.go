@@ -215,16 +215,8 @@ func (d *DoorControllerServiceImpl) toggle() {
 
 // Read the current state from the two pins connected to the magnetic switches.
 func (d *DoorControllerServiceImpl) readCurrentState() Enum {
-	open, err := d.adapter.ReadOpenPin()
-	if err != nil {
-		log.Fatal().Msgf("Error reading open pin: %v", err)
-		panic(err)
-	}
-	closed, err := d.adapter.ReadClosedPin()
-	if err != nil {
-		log.Fatal().Msgf("Error reading closed pin: %v", err)
-		panic(err)
-	}
+	open := d.adapter.ReadOpenPin()
+	closed := d.adapter.ReadClosedPin()
 
 	if open && !closed {
 		return STATE_OPEN

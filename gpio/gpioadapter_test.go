@@ -16,25 +16,21 @@ func init() {
 
 func TestInitialState(t *testing.T) {
 	gpio := NewGPIOMockAdapter(config.GetTogglePin(), config.GetOpenPin(), config.GetClosedPin())
-	if open, err := gpio.ReadOpenPin(); err != nil || open {
+	if open := gpio.ReadOpenPin(); open {
 		t.Fatalf("Expected open pin to be false, got %v", open)
 	}
-	if closed, err := gpio.ReadClosedPin(); err != nil || !closed {
+	if closed := gpio.ReadClosedPin(); !closed {
 		t.Fatalf("Expected closed pin to be true, got %v", closed)
 	}
 }
 
 func toggleHelper(t *testing.T, gpio *GPIOMockAdapter, expectedOpen bool, expectedClosed bool) {
-	if err := gpio.WriteTogglePin(true); err != nil {
-		t.Fatalf("Error writing to toggle pin: %v", err)
-	}
-	if err := gpio.WriteTogglePin(false); err != nil {
-		t.Fatalf("Error writing to toggle pin: %v", err)
-	}
-	if open, err := gpio.ReadOpenPin(); err != nil || open != expectedOpen {
+	gpio.WriteTogglePin(true)
+	gpio.WriteTogglePin(false)
+	if open := gpio.ReadOpenPin(); open != expectedOpen {
 		t.Fatalf("Expected open pin to be %v, got %v", expectedOpen, open)
 	}
-	if closed, err := gpio.ReadClosedPin(); err != nil || closed != expectedClosed {
+	if closed := gpio.ReadClosedPin(); closed != expectedClosed {
 		t.Fatalf("Expected closed pin to be %v, got %v", expectedClosed, closed)
 	}
 }
@@ -48,13 +44,11 @@ func TestToggle(t *testing.T) {
 func TestReset(t *testing.T) {
 	gpio := NewGPIOMockAdapter(config.GetTogglePin(), config.GetOpenPin(), config.GetClosedPin())
 	toggleHelper(t, gpio, true, false)
-	if err := gpio.Reset(); err != nil {
-		t.Fatalf("Error resetting pins: %v", err)
-	}
-	if open, err := gpio.ReadOpenPin(); err != nil || open {
+	gpio.Reset()
+	if open := gpio.ReadOpenPin(); open {
 		t.Fatalf("Expected open pin to be false, got %v", open)
 	}
-	if closed, err := gpio.ReadClosedPin(); err != nil || !closed {
+	if closed := gpio.ReadClosedPin(); !closed {
 		t.Fatalf("Expected closed pin to be true, got %v", closed)
 	}
 }
