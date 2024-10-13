@@ -46,8 +46,9 @@ func (g *GPIOMockAdapter) ReadClosedPin() bool {
 	return g.closedState
 }
 
-func (g *GPIOMockAdapter) Reset() {
+func (g *GPIOMockAdapter) Reset() error {
 	log.Info().Msg("Mock GPIO: Resetting pins")
 	g.openState = false
 	g.closedState = true
+	return nil
 }

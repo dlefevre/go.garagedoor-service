@@ -6,13 +6,13 @@ type GPIOAdapter interface {
 	WriteTogglePin(value bool)
 	ReadOpenPin() bool
 	ReadClosedPin() bool
-	Reset()
+	Reset() error
 }
 
 func GetGPIOAdapter() GPIOAdapter {
 	switch config.GetMode() {
 	case "prod":
-		panic("Production mode not supported yet")
+		return NewGPIORPiAdapter(config.GetTogglePin(), config.GetOpenPin(), config.GetClosedPin())
 	case "development":
 		return NewGPIOMockAdapter(config.GetTogglePin(), config.GetOpenPin(), config.GetClosedPin())
 	default:
