@@ -28,8 +28,8 @@ const (
 )
 
 var (
-	instance *DoorControllerServiceImpl = nil
-	lock                                = &sync.Mutex{}
+	instance *DoorControllerServiceImpl
+	once     sync.Once
 )
 
 type DoorControllerServiceImpl struct {
@@ -44,13 +44,9 @@ type DoorControllerServiceImpl struct {
 
 // Get one and only DoorControllerServiceImpl instance.
 func GetDoorControllerService() *DoorControllerServiceImpl {
-	if instance == nil {
-		lock.Lock()
-		defer lock.Unlock()
-		if instance == nil {
-			instance = newDoorControllerService()
-		}
-	}
+	once.Do(func() {
+		instance = newDoorControllerService()
+	})
 	return instance
 }
 

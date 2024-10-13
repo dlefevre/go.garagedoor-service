@@ -15,7 +15,7 @@ import (
 
 var (
 	instance *WebServiceImpl
-	lock     sync.Mutex
+	once     sync.Once
 )
 
 type WebServiceImpl struct {
@@ -24,13 +24,9 @@ type WebServiceImpl struct {
 }
 
 func GetWebService() *WebServiceImpl {
-	if instance == nil {
-		lock.Lock()
-		defer lock.Unlock()
-		if instance == nil {
-			instance = newWebService()
-		}
-	}
+	once.Do(func() {
+		instance = newWebService()
+	})
 	return instance
 }
 
