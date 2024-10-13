@@ -35,10 +35,14 @@ func GetWebService() *WebServiceImpl {
 }
 
 func newWebService() *WebServiceImpl {
-	s := &WebServiceImpl{
-		echo:    echo.New(),
+	return &WebServiceImpl{
+		echo:    nil,
 		apiKeys: make(map[string]bool),
 	}
+}
+
+func (s *WebServiceImpl) setUpEcho() {
+	s.echo = echo.New()
 
 	protected := s.echo.Group("")
 	protected.Use(s.validateApiKey)
@@ -47,11 +51,11 @@ func newWebService() *WebServiceImpl {
 	s.echo.GET("/healthz", healthCheck)
 	protected.POST("/toggle", toggle)
 	protected.GET("/state", state)
-
-	return s
+	protected.GET("/ws", ws)
 }
 
 func (s *WebServiceImpl) Start() {
+	s.setUpEcho()
 	address := fmt.Sprintf("%s:%d", config.GetBindHost(), config.GetBindPort())
 	go func() {
 		if err := s.echo.Start(address); err != nil && err != http.ErrServerClosed {
@@ -66,6 +70,7 @@ func (s *WebServiceImpl) Stop() {
 	if err := s.echo.Shutdown(ctx); err != nil {
 		log.Fatal().Msgf("%v", err)
 	}
+	s.echo = nil
 
 }
 
@@ -83,7 +88,9 @@ func (s *WebServiceImpl) validateApiKey(next echo.HandlerFunc) echo.HandlerFunc 
 			}
 		}
 
-		log.Warn().Msgf("Unauthorized request (forwarded ip: %v)", c.Request().Header.Get("x-forwarded-for"))
+		log.Warn().Msgf("Unauthorized request to %v (forwarded ip: %v)",
+			c.Request().RequestURI,
+			c.Request().Header.Get("x-forwarded-for"))
 		return c.JSON(http.StatusUnauthorized, ErrorResponse{
 			SimpleResponse: SimpleResponse{
 				Result: "nok",

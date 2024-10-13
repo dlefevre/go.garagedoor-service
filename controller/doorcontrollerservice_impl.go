@@ -153,10 +153,19 @@ func (d *DoorControllerServiceImpl) GetStateStr() string {
 
 // Add a listerer for state changes. When added, no initial state is sent.
 // If an update is needed, RequestState() should be called.
-func (d *DoorControllerServiceImpl) AddStateListener(handler func(string)) {
+// Returns an index that can be used to remove the listener.
+func (d *DoorControllerServiceImpl) AddStateListener(handler func(string)) uint {
 	d.lock.Lock()
 	defer d.lock.Unlock()
 	d.stateListeners = append(d.stateListeners, handler)
+	return uint(len(d.stateListeners) - 1)
+}
+
+// Remove a listener for state changes.
+func (d *DoorControllerServiceImpl) RemoveStateListener(index uint) {
+	d.lock.Lock()
+	defer d.lock.Unlock()
+	d.stateListeners = append(d.stateListeners[:index], d.stateListeners[index+1:]...)
 }
 
 // Generate a string representation of the current state.
