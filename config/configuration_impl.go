@@ -91,36 +91,43 @@ func Verify() error {
 	return nil
 }
 
+// Get: mode
 func GetMode() string {
 	once.Do(loadConfig)
 	return viperInst.GetString("mode")
 }
 
+// Get: bind.port
 func GetBindPort() int {
 	once.Do(loadConfig)
 	return viperInst.GetInt("bind.port")
 }
 
+// Get: bind.host
 func GetBindHost() string {
 	once.Do(loadConfig)
 	return viperInst.GetString("bind.host")
 }
 
+// Get: gpio.toggle_pin
 func GetTogglePin() int {
 	once.Do(loadConfig)
 	return viperInst.GetInt("gpio.toggle_pin")
 }
 
+// Get: gpio.open_pin
 func GetOpenPin() int {
 	once.Do(loadConfig)
 	return viperInst.GetInt("gpio.open_pin")
 }
 
+// Get: gpio.closed_pin
 func GetClosedPin() int {
 	once.Do(loadConfig)
 	return viperInst.GetInt("gpio.closed_pin")
 }
 
+// Get: api_keys
 func GetApiKeys() []string {
 	once.Do(loadConfig)
 	return viperInst.GetStringSlice("api_keys")

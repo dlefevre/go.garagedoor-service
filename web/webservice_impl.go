@@ -24,6 +24,7 @@ type WebServiceImpl struct {
 	apiKeys map[string]bool
 }
 
+// Get one and only WebServiceImpl instance.
 func GetWebService() *WebServiceImpl {
 	once.Do(func() {
 		instance = newWebService()
@@ -31,6 +32,7 @@ func GetWebService() *WebServiceImpl {
 	return instance
 }
 
+// Creates a new WebServiceImpl object.
 func newWebService() *WebServiceImpl {
 	return &WebServiceImpl{
 		echo:    nil,
@@ -38,6 +40,7 @@ func newWebService() *WebServiceImpl {
 	}
 }
 
+// Configure the Echo web server.
 func (s *WebServiceImpl) setUpEcho() {
 	s.echo = echo.New()
 
@@ -58,6 +61,7 @@ func (s *WebServiceImpl) setUpEcho() {
 	protected.GET("/ws", ws)
 }
 
+// Start the web server.
 func (s *WebServiceImpl) Start() {
 	s.setUpEcho()
 	address := fmt.Sprintf("%s:%d", config.GetBindHost(), config.GetBindPort())
@@ -68,6 +72,7 @@ func (s *WebServiceImpl) Start() {
 	}()
 }
 
+// Stop the web server.
 func (s *WebServiceImpl) Stop() {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -78,6 +83,8 @@ func (s *WebServiceImpl) Stop() {
 
 }
 
+// Middleware handler to validate the API key. The API key is first matched against an internal
+// cache of valid keys, then against the list of keys in the configuration file.
 func (s *WebServiceImpl) validateApiKey(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		apiKey := c.Request().Header.Get("x-api-key")
@@ -104,6 +111,7 @@ func (s *WebServiceImpl) validateApiKey(next echo.HandlerFunc) echo.HandlerFunc 
 	}
 }
 
+// Middleware handler to log requests.
 func logger(c echo.Context, v middleware.RequestLoggerValues) error {
 	log.Info().
 		Str("URI", v.URI).

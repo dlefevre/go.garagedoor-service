@@ -28,12 +28,14 @@ type CommandMessage struct {
 	Command string `json:"command"`
 }
 
+// Health check handler.
 func healthCheck(c echo.Context) error {
 	return c.JSON(http.StatusOK, SimpleResponse{
 		Result: "OK",
 	})
 }
 
+// Toggle the door.
 func toggle(c echo.Context) error {
 	dc := controller.GetDoorControllerService()
 	dc.RequestToggle()
@@ -42,6 +44,7 @@ func toggle(c echo.Context) error {
 	})
 }
 
+// Get the current state of the door.
 func state(c echo.Context) error {
 	dc := controller.GetDoorControllerService()
 	return c.JSON(http.StatusOK, StateResponse{
@@ -52,6 +55,7 @@ func state(c echo.Context) error {
 	})
 }
 
+// Handler for the websocket.
 func ws(c echo.Context) error {
 	websocket.Handler(func(ws *websocket.Conn) {
 		defer ws.Close()

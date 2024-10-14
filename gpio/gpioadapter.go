@@ -9,6 +9,7 @@ type GPIOAdapter interface {
 	Reset() error
 }
 
+// GetGPIOAdapter returns the GPIO adapter based on the current mode.
 func GetGPIOAdapter() GPIOAdapter {
 	switch config.GetMode() {
 	case "production":

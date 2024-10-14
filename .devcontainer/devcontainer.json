@@ -19,7 +19,7 @@
                 "GitHub.copilot",
                 "ms-azuretools.vscode-docker",
                 "bierner.markdown-preview-github-styles"
-            ],
+            ]
         }
     },
     

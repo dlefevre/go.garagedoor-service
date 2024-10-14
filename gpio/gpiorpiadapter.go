@@ -15,6 +15,7 @@ type GPIORPiAdapter struct {
 	closedPin rpio.Pin
 }
 
+// Create a new GPIORPiAdapter.
 func NewGPIORPiAdapter(togglePin int, openPin int, closedPin int) *GPIORPiAdapter {
 	once.Do(func() {
 		rpio.Open()
@@ -32,6 +33,7 @@ func NewGPIORPiAdapter(togglePin int, openPin int, closedPin int) *GPIORPiAdapte
 	return adapter
 }
 
+// Set the toggle pin to high or low.
 func (g *GPIORPiAdapter) WriteTogglePin(value bool) {
 	if value {
 		g.togglePin.High()
@@ -40,16 +42,19 @@ func (g *GPIORPiAdapter) WriteTogglePin(value bool) {
 	}
 }
 
+// Read the state of the open pin.
 func (g *GPIORPiAdapter) ReadOpenPin() bool {
 	state := rpio.ReadPin(g.openPin)
 	return state == rpio.High
 }
 
+// Read the state of the closed pin.
 func (g *GPIORPiAdapter) ReadClosedPin() bool {
 	state := rpio.ReadPin(g.closedPin)
 	return state == rpio.High
 }
 
+// Reset isn't implemented dfor this adapter type.
 func (g *GPIORPiAdapter) Reset() error {
 	return fmt.Errorf("the `Reset` function isn't implemented for the GPIORPiAdapter")
 }

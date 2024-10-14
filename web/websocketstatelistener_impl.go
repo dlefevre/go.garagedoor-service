@@ -11,6 +11,7 @@ type WebSocketStateListerer struct {
 	index uint
 }
 
+// Handler for sending state updates to the websocket.
 func (w *WebSocketStateListerer) StateChanged(state string) {
 	err := websocket.JSON.Send(w.ws, StateResponse{
 		SimpleResponse: SimpleResponse{
@@ -23,12 +24,14 @@ func (w *WebSocketStateListerer) StateChanged(state string) {
 	}
 }
 
+// Register the websocket, and add a state listener to send state updates to the websocket.
 func (w *WebSocketStateListerer) Connect(ws *websocket.Conn) {
 	w.ws = ws
 	dc := controller.GetDoorControllerService()
 	w.index = dc.AddStateListener(w.StateChanged)
 }
 
+// Remove the state listener.
 func (w *WebSocketStateListerer) Disconnect() {
 	dc := controller.GetDoorControllerService()
 	dc.RemoveStateListener(w.index)

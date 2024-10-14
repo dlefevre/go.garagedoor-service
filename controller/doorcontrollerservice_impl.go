@@ -11,20 +11,20 @@ import (
 type Enum uint
 
 // Queue size for the command channel.
-const QUEUE_SIZE = 10
+const QueueSize = 10
 
 // Enumeration of commands.
 const (
-	CMD_DUMMY Enum = iota
-	CMD_TOGGLE
-	CMD_STATE
+	CmdDummy Enum = iota
+	CmdToggle
+	CmdState
 )
 
 // Enumeration of states.
 const (
-	STATE_OPEN Enum = iota
-	STATE_CLOSED
-	STATE_UNKNOWN
+	StateOpen Enum = iota
+	StateClosed
+	StateUnknown
 )
 
 var (
@@ -55,7 +55,7 @@ func newDoorControllerService() *DoorControllerServiceImpl {
 	return &DoorControllerServiceImpl{
 		command:        nil,
 		stateListeners: make([]func(string), 0),
-		state:          STATE_UNKNOWN,
+		state:          StateUnknown,
 		lock:           sync.RWMutex{},
 		adapter:        gpio.GetGPIOAdapter(),
 		wg:             sync.WaitGroup{},
@@ -68,7 +68,7 @@ func (d *DoorControllerServiceImpl) Reset() {
 	d.lock.Lock()
 	defer d.lock.Unlock()
 	d.adapter.Reset()
-	d.state = STATE_UNKNOWN
+	d.state = StateUnknown
 }
 
 // Main loop for handling commands.
@@ -77,11 +77,11 @@ func (d *DoorControllerServiceImpl) commandLoop() {
 
 	for d.running {
 		switch <-d.command {
-		case CMD_TOGGLE:
+		case CmdToggle:
 			d.toggle()
-		case CMD_STATE:
+		case CmdState:
 			d.broadcastState()
-		case CMD_DUMMY:
+		case CmdDummy:
 			// Do nothing
 		default:
 			log.Warn().Msgf("unknown command: %v", d.command)
@@ -114,7 +114,7 @@ func (d *DoorControllerServiceImpl) Start() {
 	defer d.lock.Unlock()
 
 	d.running = true
-	d.command = make(chan Enum, QUEUE_SIZE)
+	d.command = make(chan Enum, QueueSize)
 	go d.commandLoop()
 	go d.stateLoop()
 	d.wg.Add(2)
@@ -134,12 +134,12 @@ func (d *DoorControllerServiceImpl) Stop() {
 
 // Put a toggle command on the command queue
 func (d *DoorControllerServiceImpl) RequestToggle() {
-	d.command <- CMD_TOGGLE
+	d.command <- CmdToggle
 }
 
 // Put a state update request on the command queue
 func (d *DoorControllerServiceImpl) RequestState() {
-	d.command <- CMD_STATE
+	d.command <- CmdState
 }
 
 // Get the current state of the garagedoor.
@@ -169,9 +169,9 @@ func (d *DoorControllerServiceImpl) stateStr() string {
 	d.lock.RLock()
 	defer d.lock.RUnlock()
 	switch d.state {
-	case STATE_OPEN:
+	case StateOpen:
 		return "open"
-	case STATE_CLOSED:
+	case StateClosed:
 		return "closed"
 	default:
 		return "unknown"
@@ -215,10 +215,10 @@ func (d *DoorControllerServiceImpl) readCurrentState() Enum {
 	closed := d.adapter.ReadClosedPin()
 
 	if open && !closed {
-		return STATE_OPEN
+		return StateOpen
 	} else if !open && closed {
-		return STATE_CLOSED
+		return StateClosed
 	} else {
-		return STATE_UNKNOWN
+		return StateUnknown
 	}
 }

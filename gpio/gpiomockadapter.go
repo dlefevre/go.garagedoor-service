@@ -15,6 +15,7 @@ type GPIOMockAdapter struct {
 	closedState    bool
 }
 
+// Create a new GPIOMockAdapter.
 func NewGPIOMockAdapter(togglePin int, openPin int, closedPin int) *GPIOMockAdapter {
 	log.Info().Msg("Mock GPIO: Creating mock GPIO adapter")
 	return &GPIOMockAdapter{
@@ -26,6 +27,7 @@ func NewGPIOMockAdapter(togglePin int, openPin int, closedPin int) *GPIOMockAdap
 	}
 }
 
+// Set the toggle pin to high or low.
 func (g *GPIOMockAdapter) WriteTogglePin(value bool) {
 	log.Info().Msg(fmt.Sprintf("Mock GPIO: Writing to pin %d: %v", g.togglePin, value))
 	if !g.togglePinState && value {
@@ -36,16 +38,19 @@ func (g *GPIOMockAdapter) WriteTogglePin(value bool) {
 	g.togglePinState = value
 }
 
+// Read the state of the open pin.
 func (g *GPIOMockAdapter) ReadOpenPin() bool {
 	log.Info().Msg(fmt.Sprintf("Mock GPIO: Reading from pin %d: %v", g.openPin, g.openState))
 	return g.openState
 }
 
+// Read the state of the closed pin.
 func (g *GPIOMockAdapter) ReadClosedPin() bool {
 	log.Info().Msg(fmt.Sprintf("Mock GPIO: Reading from pin %d: %v", g.closedPin, g.closedState))
 	return g.closedState
 }
 
+// Reset the pins to their initial state.
 func (g *GPIOMockAdapter) Reset() error {
 	log.Info().Msg("Mock GPIO: Resetting pins")
 	g.openState = false
