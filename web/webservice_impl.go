@@ -19,12 +19,13 @@ var (
 	once     sync.Once
 )
 
+// WebServiceImpl is a singleton that encapsulates the web server, and retains a cache of valid API keys.
 type WebServiceImpl struct {
 	echo    *echo.Echo
 	apiKeys map[string]bool
 }
 
-// Get one and only WebServiceImpl instance.
+// GetWebService returns the one and only WebServiceImpl instance.
 func GetWebService() *WebServiceImpl {
 	once.Do(func() {
 		instance = newWebService()

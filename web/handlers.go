@@ -10,20 +10,24 @@ import (
 	"golang.org/x/net/websocket"
 )
 
+// SimpleResponse is a simple response object, containing a result (ok, nok).
 type SimpleResponse struct {
 	Result string `json:"result"`
 }
 
+// ErrorResponse is a response object for errors, containing  a result (nok) and a message.
 type ErrorResponse struct {
 	SimpleResponse
 	Message string `json:"message"`
 }
 
+// StateResponse is a response object for the state of the door, containing a result (ok) and the state.
 type StateResponse struct {
 	SimpleResponse
 	State string `json:"state"`
 }
 
+// CommandMessage is a message object for commands, containing a command.
 type CommandMessage struct {
 	Command string `json:"command"`
 }
@@ -35,7 +39,7 @@ func healthCheck(c echo.Context) error {
 	})
 }
 
-// Toggle the door.
+// Toggle forwards a toggle request to the DoorControllerService.
 func toggle(c echo.Context) error {
 	dc := controller.GetDoorControllerService()
 	dc.RequestToggle()
