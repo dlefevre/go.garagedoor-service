@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/dlefevre/go.garagedoor-service/controller"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/net/websocket"
 )
@@ -16,6 +17,7 @@ import (
 func init() {
 	// Set the environment variable for the configuration path
 	os.Setenv("GARAGESERVICE_CONFIG_PATH", "..")
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 }
 
 func setup() {
@@ -43,7 +45,6 @@ func toggleHelper(t *testing.T) {
 		t.Fatalf("Error creating request: %v", err)
 	}
 	req.Header.Add("x-api-key", "test")
-	log.Debug().Msg("Sending request")
 	resp, err := client.Do(req)
 	if err != nil {
 		t.Fatalf("Error sending request: %v", err)

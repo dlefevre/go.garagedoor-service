@@ -9,6 +9,7 @@ import (
 
 	"github.com/dlefevre/go.garagedoor-service/config"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -40,11 +41,18 @@ func newWebService() *WebServiceImpl {
 func (s *WebServiceImpl) setUpEcho() {
 	s.echo = echo.New()
 
-	protected := s.echo.Group("")
-	protected.Use(s.validateApiKey)
+	s.echo.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+		LogURI:        true,
+		LogStatus:     true,
+		LogValuesFunc: logger,
+	}))
 
 	s.echo.GET("/readyz", healthCheck)
 	s.echo.GET("/healthz", healthCheck)
+
+	protected := s.echo.Group("")
+	protected.Use(s.validateApiKey)
+
 	protected.POST("/toggle", toggle)
 	protected.GET("/state", state)
 	protected.GET("/ws", ws)
@@ -94,4 +102,13 @@ func (s *WebServiceImpl) validateApiKey(next echo.HandlerFunc) echo.HandlerFunc 
 			Message: "Unauthorized",
 		})
 	}
+}
+
+func logger(c echo.Context, v middleware.RequestLoggerValues) error {
+	log.Info().
+		Str("URI", v.URI).
+		Int("status", v.Status).
+		Msg("request")
+
+	return nil
 }

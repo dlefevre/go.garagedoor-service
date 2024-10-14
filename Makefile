@@ -4,7 +4,7 @@ BINARY_NAME := garagedoor-service
 .PHONY: armv6
 armv6: .dist/$(BINARY_NAME).armv6
 
-.dist/g$(BINARY_NAME).armv6: $(GOFILES)
+.dist/$(BINARY_NAME).armv6: $(GOFILES)
 	GOARCH=arm GOARM=6 go build -o .dist/$(BINARY_NAME).armv6 main.go
 
 .PHONY: armv7
