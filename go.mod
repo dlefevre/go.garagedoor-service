@@ -8,7 +8,7 @@ require (
 	github.com/spf13/viper v1.19.0
 	github.com/stianeikeland/go-rpio/v4 v4.6.0
 	golang.org/x/crypto v0.28.0
-	golang.org/x/net v0.24.0
+	golang.org/x/net v0.30.0
 )
 
 require (
