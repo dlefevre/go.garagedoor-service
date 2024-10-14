@@ -93,7 +93,7 @@ func (s *WebServiceImpl) validateApiKey(next echo.HandlerFunc) echo.HandlerFunc 
 			return next(c)
 		}
 
-		for _, digest := range config.GetApiKeys() {
+		for _, digest := range config.GetAPIKeys() {
 			if err := bcrypt.CompareHashAndPassword([]byte(digest), []byte(apiKey)); err == nil {
 				s.apiKeys[apiKey] = true
 				return next(c)

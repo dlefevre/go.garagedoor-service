@@ -10,7 +10,7 @@ import (
 
 var (
 	// All known configuration properties, and weither they are mandatory or not
-	KnownKeys = map[string]bool{
+	knownKeys = map[string]bool{
 		"mode":            true,
 		"bind.port":       true,
 		"bind.host":       true,
@@ -20,7 +20,7 @@ var (
 		"api_keys":        true,
 	}
 
-	viperInst *viper.Viper = nil
+	viperInst *viper.Viper
 	once      sync.Once
 )
 
@@ -44,13 +44,13 @@ func loadConfig() {
 // Verifies that all mandatory keys are set in the configuration file,
 // and that no unknown keys are present.
 func verifyKeys() error {
-	for key, mandatory := range KnownKeys {
+	for key, mandatory := range knownKeys {
 		if mandatory && !viperInst.IsSet(key) {
 			return fmt.Errorf("config: configuration property %s is mandatory", key)
 		}
 	}
 	for _, key := range viperInst.AllKeys() {
-		if _, found := KnownKeys[key]; !found {
+		if _, found := knownKeys[key]; !found {
 			return fmt.Errorf("config: configuration property %s is unknown", key)
 		}
 	}
@@ -127,8 +127,8 @@ func GetClosedPin() int {
 	return viperInst.GetInt("gpio.closed_pin")
 }
 
-// GetApiKeys returns the list of API keys.
-func GetApiKeys() []string {
+// GetAPIKeys returns the list of API keys.
+func GetAPIKeys() []string {
 	once.Do(loadConfig)
 	return viperInst.GetStringSlice("api_keys")
 }

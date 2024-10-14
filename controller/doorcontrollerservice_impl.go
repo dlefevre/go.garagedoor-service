@@ -11,20 +11,20 @@ import (
 type Enum uint
 
 // Queue size for the command channel.
-const QueueSize = 10
+const queueSize = 10
 
 // Enumeration of commands.
 const (
-	CmdDummy Enum = iota
-	CmdToggle
-	CmdState
+	CmdDummy  Enum = iota // CmdDummy does nothing, but prevents errors when closing the channel.
+	CmdToggle             // CmdToggle identifies the toggle command
+	CmdState              // CmdState identifies the state request command
 )
 
 // Enumeration of states.
 const (
-	StateOpen Enum = iota
-	StateClosed
-	StateUnknown
+	StateOpen    Enum = iota // StateOpen represents the open state
+	StateClosed              // StateClosed represents the closed state
+	StateUnknown             // StateUnknown represents the unknown state
 )
 
 var (
@@ -32,7 +32,7 @@ var (
 	once     sync.Once
 )
 
-// DoorControllerService implements the service for controlling the garagedoor and reporting its state.
+// DoorControllerServiceImpl implements the service for controlling the garagedoor and reporting its state.
 type DoorControllerServiceImpl struct {
 	command        chan Enum
 	stateListeners []func(string)
@@ -115,7 +115,7 @@ func (d *DoorControllerServiceImpl) Start() {
 	defer d.lock.Unlock()
 
 	d.running = true
-	d.command = make(chan Enum, QueueSize)
+	d.command = make(chan Enum, queueSize)
 	go d.commandLoop()
 	go d.stateLoop()
 	d.wg.Add(2)

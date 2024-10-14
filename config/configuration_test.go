@@ -46,7 +46,7 @@ func TestGPIO(t *testing.T) {
 }
 
 func TestAPIKeys(t *testing.T) {
-	keys := GetApiKeys()
+	keys := GetAPIKeys()
 	if len(keys) != 1 {
 		t.Fatalf("Expected 1 API key, got %d", len(keys))
 	}

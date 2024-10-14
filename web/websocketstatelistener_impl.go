@@ -13,7 +13,7 @@ type WebSocketStateListener struct {
 	index uint
 }
 
-// StateChange handles sending state updates to the websocket.
+// StateChanged handles sending state updates to the websocket.
 func (w *WebSocketStateListener) StateChanged(state string) {
 	err := websocket.JSON.Send(w.ws, StateResponse{
 		SimpleResponse: SimpleResponse{
