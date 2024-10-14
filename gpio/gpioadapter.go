@@ -11,7 +11,7 @@ type GPIOAdapter interface {
 
 func GetGPIOAdapter() GPIOAdapter {
 	switch config.GetMode() {
-	case "prod":
+	case "production":
 		return NewGPIORPiAdapter(config.GetTogglePin(), config.GetOpenPin(), config.GetClosedPin())
 	case "development":
 		return NewGPIOMockAdapter(config.GetTogglePin(), config.GetOpenPin(), config.GetClosedPin())
