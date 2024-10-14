@@ -2,6 +2,7 @@ package gpio
 
 import "github.com/dlefevre/go.garagedoor-service/config"
 
+// GPIOAdapter specifies the interface for GPIO operations.
 type GPIOAdapter interface {
 	WriteTogglePin(value bool)
 	ReadOpenPin() bool

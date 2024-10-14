@@ -6,6 +6,9 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// GPIOMockAdapter is a mock GPIO adapter, which:
+// - mimicks the behavior of the garage door, without the delays of a physical door and motor.
+// - reports all actions to the log.
 type GPIOMockAdapter struct {
 	togglePin      int
 	openPin        int
@@ -15,7 +18,7 @@ type GPIOMockAdapter struct {
 	closedState    bool
 }
 
-// Create a new GPIOMockAdapter.
+// NewGPIOMockAdapter creates a new GPIOMockAdapter.
 func NewGPIOMockAdapter(togglePin int, openPin int, closedPin int) *GPIOMockAdapter {
 	log.Info().Msg("Mock GPIO: Creating mock GPIO adapter")
 	return &GPIOMockAdapter{
@@ -27,7 +30,7 @@ func NewGPIOMockAdapter(togglePin int, openPin int, closedPin int) *GPIOMockAdap
 	}
 }
 
-// Set the toggle pin to high or low.
+// WriteTogglePin sets the toggle pin to high when value is true.
 func (g *GPIOMockAdapter) WriteTogglePin(value bool) {
 	log.Info().Msg(fmt.Sprintf("Mock GPIO: Writing to pin %d: %v", g.togglePin, value))
 	if !g.togglePinState && value {
@@ -38,13 +41,13 @@ func (g *GPIOMockAdapter) WriteTogglePin(value bool) {
 	g.togglePinState = value
 }
 
-// Read the state of the open pin.
+// ReadOpenPin returns true if the open pin is high, and false otherwise.
 func (g *GPIOMockAdapter) ReadOpenPin() bool {
 	log.Info().Msg(fmt.Sprintf("Mock GPIO: Reading from pin %d: %v", g.openPin, g.openState))
 	return g.openState
 }
 
-// Read the state of the closed pin.
+// ReadClosedPin returns true if the closed pin is high, and false otherwise.
 func (g *GPIOMockAdapter) ReadClosedPin() bool {
 	log.Info().Msg(fmt.Sprintf("Mock GPIO: Reading from pin %d: %v", g.closedPin, g.closedState))
 	return g.closedState

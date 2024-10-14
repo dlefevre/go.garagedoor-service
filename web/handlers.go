@@ -65,9 +65,9 @@ func ws(c echo.Context) error {
 		defer ws.Close()
 
 		// Add a state listener to send state updates to the websocket.
-		WebSocketStateListerer := &WebSocketStateListerer{}
-		WebSocketStateListerer.Connect(ws)
-		defer WebSocketStateListerer.Disconnect()
+		WebSocketStateListener := &WebSocketStateListener{}
+		WebSocketStateListener.Connect(ws)
+		defer WebSocketStateListener.Disconnect()
 
 		// Read messages from the websocket.
 		dc := controller.GetDoorControllerService()

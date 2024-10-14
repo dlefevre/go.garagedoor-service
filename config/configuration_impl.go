@@ -10,7 +10,7 @@ import (
 
 var (
 	// All known configuration properties, and weither they are mandatory or not
-	KNOWN_KEYS = map[string]bool{
+	KnownKeys = map[string]bool{
 		"mode":            true,
 		"bind.port":       true,
 		"bind.host":       true,
@@ -44,13 +44,13 @@ func loadConfig() {
 // Verifies that all mandatory keys are set in the configuration file,
 // and that no unknown keys are present.
 func verifyKeys() error {
-	for key, mandatory := range KNOWN_KEYS {
+	for key, mandatory := range KnownKeys {
 		if mandatory && !viperInst.IsSet(key) {
 			return fmt.Errorf("config: configuration property %s is mandatory", key)
 		}
 	}
 	for _, key := range viperInst.AllKeys() {
-		if _, found := KNOWN_KEYS[key]; !found {
+		if _, found := KnownKeys[key]; !found {
 			return fmt.Errorf("config: configuration property %s is unknown", key)
 		}
 	}
@@ -91,43 +91,43 @@ func Verify() error {
 	return nil
 }
 
-// Get: mode
+// GetMode returns the current mode.
 func GetMode() string {
 	once.Do(loadConfig)
 	return viperInst.GetString("mode")
 }
 
-// Get: bind.port
+// GetBindPort returns the port to bind the web server to.
 func GetBindPort() int {
 	once.Do(loadConfig)
 	return viperInst.GetInt("bind.port")
 }
 
-// Get: bind.host
+// GetBindHost returns the host to bind the web server to.
 func GetBindHost() string {
 	once.Do(loadConfig)
 	return viperInst.GetString("bind.host")
 }
 
-// Get: gpio.toggle_pin
+// GetTogglePin returns the GPIO pin number for the toggle state.
 func GetTogglePin() int {
 	once.Do(loadConfig)
 	return viperInst.GetInt("gpio.toggle_pin")
 }
 
-// Get: gpio.open_pin
+// GetOpenPin returns the GPIO pin number for the open state.
 func GetOpenPin() int {
 	once.Do(loadConfig)
 	return viperInst.GetInt("gpio.open_pin")
 }
 
-// Get: gpio.closed_pin
+// GetClosedPin returns the GPIO pin number for the closed state.
 func GetClosedPin() int {
 	once.Do(loadConfig)
 	return viperInst.GetInt("gpio.closed_pin")
 }
 
-// Get: api_keys
+// GetApiKeys returns the list of API keys.
 func GetApiKeys() []string {
 	once.Do(loadConfig)
 	return viperInst.GetStringSlice("api_keys")

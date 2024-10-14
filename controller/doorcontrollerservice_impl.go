@@ -32,6 +32,7 @@ var (
 	once     sync.Once
 )
 
+// DoorControllerService implements the service for controlling the garagedoor and reporting its state.
 type DoorControllerServiceImpl struct {
 	command        chan Enum
 	stateListeners []func(string)
@@ -42,7 +43,7 @@ type DoorControllerServiceImpl struct {
 	running        bool
 }
 
-// Get one and only DoorControllerServiceImpl instance.
+// GetDoorControllerService returns the one and only DoorControllerServiceImpl instance.
 func GetDoorControllerService() *DoorControllerServiceImpl {
 	once.Do(func() {
 		instance = newDoorControllerService()
@@ -108,7 +109,7 @@ func (d *DoorControllerServiceImpl) stateLoop() {
 	log.Info().Msg("stateLoop exiting")
 }
 
-// Start All goroutines.
+// Start all goroutines.
 func (d *DoorControllerServiceImpl) Start() {
 	d.lock.Lock()
 	defer d.lock.Unlock()
@@ -132,22 +133,22 @@ func (d *DoorControllerServiceImpl) Stop() {
 	log.Info().Msg("DoorControllerService stopped")
 }
 
-// Put a toggle command on the command queue
+// RequestToggle puts a toggle command on the command queue
 func (d *DoorControllerServiceImpl) RequestToggle() {
 	d.command <- CmdToggle
 }
 
-// Put a state update request on the command queue
+// RequestState puts a state update request on the command queue
 func (d *DoorControllerServiceImpl) RequestState() {
 	d.command <- CmdState
 }
 
-// Get the current state of the garagedoor.
+// GetStateStr returns a string representation of the current state.
 func (d *DoorControllerServiceImpl) GetStateStr() string {
 	return d.stateStr()
 }
 
-// Add a listerer for state changes. When added, no initial state is sent.
+// AddStateListener adds a listerer for state changes. When added, no initial state is sent.
 // If an update is needed, RequestState() should be called.
 // Returns an index that can be used to remove the listener.
 func (d *DoorControllerServiceImpl) AddStateListener(handler func(string)) uint {
@@ -157,7 +158,7 @@ func (d *DoorControllerServiceImpl) AddStateListener(handler func(string)) uint 
 	return uint(len(d.stateListeners) - 1)
 }
 
-// Remove a listener for state changes.
+// RemoveStateListener removes a listener by index.
 func (d *DoorControllerServiceImpl) RemoveStateListener(index uint) {
 	d.lock.Lock()
 	defer d.lock.Unlock()

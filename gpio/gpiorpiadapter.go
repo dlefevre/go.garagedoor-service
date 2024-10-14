@@ -9,13 +9,14 @@ import (
 
 var once sync.Once
 
+// GPIORPiAdapter is an adapter for the Raspberry Pi GPIO pins.
 type GPIORPiAdapter struct {
 	togglePin rpio.Pin
 	openPin   rpio.Pin
 	closedPin rpio.Pin
 }
 
-// Create a new GPIORPiAdapter.
+// NewGPIORPiAdapter creates a new GPIORPiAdapter.
 func NewGPIORPiAdapter(togglePin int, openPin int, closedPin int) *GPIORPiAdapter {
 	once.Do(func() {
 		rpio.Open()
@@ -33,7 +34,7 @@ func NewGPIORPiAdapter(togglePin int, openPin int, closedPin int) *GPIORPiAdapte
 	return adapter
 }
 
-// Set the toggle pin to high or low.
+// WriteTogglePin sets the toggle pin to high when value is true.
 func (g *GPIORPiAdapter) WriteTogglePin(value bool) {
 	if value {
 		g.togglePin.High()
@@ -42,13 +43,13 @@ func (g *GPIORPiAdapter) WriteTogglePin(value bool) {
 	}
 }
 
-// Read the state of the open pin.
+// ReadOpenPin returns true if the open pin is high, and false otherwise
 func (g *GPIORPiAdapter) ReadOpenPin() bool {
 	state := rpio.ReadPin(g.openPin)
 	return state == rpio.High
 }
 
-// Read the state of the closed pin.
+// ReadClosedPin returns true if the closed pin is high, and false otherwise
 func (g *GPIORPiAdapter) ReadClosedPin() bool {
 	state := rpio.ReadPin(g.closedPin)
 	return state == rpio.High
