@@ -1,0 +1,24 @@
+# .github/workflows/release.yaml
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  releases-matrix:
+    name: Release Go Binary
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: wangyoucao577/go-release-action@v1.33
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        goos: linux
+        goarch: arm
+        goversion: "https://dl.google.com/go/go1.23.1.linux-amd64.tar.gz"
+        project_path: "."
+        binary_name: "garagedoor-service.armv6"
+        extra_files: LICENSE README.md
+        build_command: "make"
+        build_flags: "armv6"
