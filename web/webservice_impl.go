@@ -55,7 +55,7 @@ func (s *WebServiceImpl) setUpEcho() {
 	s.echo.GET("/healthz", healthCheck)
 
 	protected := s.echo.Group("")
-	protected.Use(s.validateApiKey)
+	protected.Use(s.validateAPIKey)
 
 	protected.POST("/toggle", toggle)
 	protected.GET("/state", state)
@@ -86,7 +86,7 @@ func (s *WebServiceImpl) Stop() {
 
 // Middleware handler to validate the API key. The API key is first matched against an internal
 // cache of valid keys, then against the list of keys in the configuration file.
-func (s *WebServiceImpl) validateApiKey(next echo.HandlerFunc) echo.HandlerFunc {
+func (s *WebServiceImpl) validateAPIKey(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		apiKey := c.Request().Header.Get("x-api-key")
 		if s.apiKeys[apiKey] {

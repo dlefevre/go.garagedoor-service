@@ -8,6 +8,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// Enum pseudo-type.
 type Enum uint
 
 // Queue size for the command channel.
