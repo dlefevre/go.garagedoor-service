@@ -1,24 +1,49 @@
-# .github/workflows/release.yaml
+name: Release Binaries
 
 on:
-  release:
-    types: [created]
+  push:
+    tags:
+      - 'v*'  # Triggers the workflow on version tag pushes
 
 jobs:
-  releases-matrix:
-    name: Release Go Binary
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: wangyoucao577/go-release-action@v1.33
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        goos: linux
-        goarch: arm
-        goversion: "https://dl.google.com/go/go1.23.1.linux-amd64.tar.gz"
-        project_path: "."
-        binary_name: "garagedoor-service.armv6"
-        extra_files: LICENSE README.md
-        build_command: "make"
-        build_flags: "armv6"
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Create GitHub release
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      # Step 3: Set up Go
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.23'  # Specify your Go version here
+
+      # Step 4: Build the Go project for ARMv6 architecture
+      - name: Build binary for ARMv6
+        run: |
+          make armv6
+
+      # Step 5: Upload release asset (the binary)
+      - name: Upload Release Binary
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: .dist/garagedoor-service.armv6
+          asset_name: garagedoor-service.armv6
+          asset_content_type: application/octet-stream
