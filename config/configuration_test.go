@@ -54,3 +54,18 @@ func TestAPIKeys(t *testing.T) {
 		t.Fatalf("Expected API key to be bcrypt digest of 'test'")
 	}
 }
+
+func TestMQTT(t *testing.T) {
+	if !GetMQTTEnabled() {
+		t.Fatalf("Expected MQTT to be enabled")
+	}
+	if GetMQTTURL() != "mqtt://mqtt.eclipseprojects.io:1883" {
+		t.Fatalf("Expected MQTT URL to be mqtt://mqtt.eclipseprojects.io:1883, got %s", GetMQTTURL())
+	}
+	if GetMQTTClientID() != "garage_door" {
+		t.Fatalf("Expected MQTT client ID to be garage_door, got %s", GetMQTTClientID())
+	}
+	if GetMQTTTopicPrefix() != "/homeassistant/" {
+		t.Fatalf("Expected MQTT topic prefix to be /homeassistant/, got %s", GetMQTTTopicPrefix())
+	}
+}

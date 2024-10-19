@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/dlefevre/go.garagedoor-service/gpio"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 )
 
@@ -36,7 +37,7 @@ var (
 // DoorControllerService implements the service for controlling the garagedoor and reporting its state.
 type DoorControllerService struct {
 	command        chan Enum
-	stateListeners []func(string)
+	stateListeners map[uuid.UUID]func(string)
 	state          Enum
 	lock           sync.RWMutex
 	adapter        gpio.GPIOAdapter
@@ -56,7 +57,7 @@ func GetDoorControllerService() *DoorControllerService {
 func newDoorControllerService() *DoorControllerService {
 	return &DoorControllerService{
 		command:        nil,
-		stateListeners: make([]func(string), 0),
+		stateListeners: make(map[uuid.UUID]func(string)),
 		state:          StateUnknown,
 		lock:           sync.RWMutex{},
 		adapter:        gpio.GetGPIOAdapter(),
@@ -152,18 +153,19 @@ func (d *DoorControllerService) GetStateStr() string {
 // AddStateListener adds a listerer for state changes. When added, no initial state is sent.
 // If an update is needed, RequestState() should be called.
 // Returns an index that can be used to remove the listener.
-func (d *DoorControllerService) AddStateListener(handler func(string)) uint {
+func (d *DoorControllerService) AddStateListener(handler func(string)) uuid.UUID {
 	d.lock.Lock()
 	defer d.lock.Unlock()
-	d.stateListeners = append(d.stateListeners, handler)
-	return uint(len(d.stateListeners) - 1)
+	id := uuid.New()
+	d.stateListeners[id] = handler
+	return id
 }
 
 // RemoveStateListener removes a listener by index.
-func (d *DoorControllerService) RemoveStateListener(index uint) {
+func (d *DoorControllerService) RemoveStateListener(id uuid.UUID) {
 	d.lock.Lock()
 	defer d.lock.Unlock()
-	d.stateListeners = append(d.stateListeners[:index], d.stateListeners[index+1:]...)
+	delete(d.stateListeners, id)
 }
 
 // Generate a string representation of the current state.

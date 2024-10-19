@@ -12,6 +12,12 @@ gpio:
   open_pin: 21
   closed_pin: 22
 
+mqtt:
+  enabled: true
+  client_id: garage_door
+  topic_prefix: /homeassistant/
+  url: mqtt://mqtt.eclipseprojects.io:1883
+
 # bcrypt hashed api keys.
 # Use the following command to generate a new hash:
 #  $ htpasswd -nbBC 10 "" <password> | tr -d ':\n'

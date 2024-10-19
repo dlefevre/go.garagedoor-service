@@ -2,6 +2,7 @@ package web
 
 import (
 	"github.com/dlefevre/go.garagedoor-service/controller"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/net/websocket"
 )
@@ -9,8 +10,8 @@ import (
 // WebSocketStateListener implements the handler to report state changes to a websocket, and register and unregister
 // the listener with the DoorControllerService.
 type WebSocketStateListener struct {
-	ws    *websocket.Conn
-	index uint
+	ws *websocket.Conn
+	id uuid.UUID
 }
 
 // StateChanged handles sending state updates to the websocket.
@@ -30,11 +31,11 @@ func (w *WebSocketStateListener) StateChanged(state string) {
 func (w *WebSocketStateListener) Connect(ws *websocket.Conn) {
 	w.ws = ws
 	dc := controller.GetDoorControllerService()
-	w.index = dc.AddStateListener(w.StateChanged)
+	w.id = dc.AddStateListener(w.StateChanged)
 }
 
 // Disconnect removes the state listener.
 func (w *WebSocketStateListener) Disconnect() {
 	dc := controller.GetDoorControllerService()
-	dc.RemoveStateListener(w.index)
+	dc.RemoveStateListener(w.id)
 }

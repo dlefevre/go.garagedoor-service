@@ -11,13 +11,19 @@ import (
 var (
 	// All known configuration properties, and weither they are mandatory or not
 	knownKeys = map[string]bool{
-		"mode":            true,
-		"bind.port":       true,
-		"bind.host":       true,
-		"gpio.toggle_pin": true,
-		"gpio.open_pin":   true,
-		"gpio.closed_pin": true,
-		"api_keys":        true,
+		"mode":              true,
+		"bind.port":         true,
+		"bind.host":         true,
+		"gpio.toggle_pin":   true,
+		"gpio.open_pin":     true,
+		"gpio.closed_pin":   true,
+		"api_keys":          true,
+		"mqtt.enabled":      true,
+		"mqtt.url":          false,
+		"mqtt.username":     false,
+		"mqtt.password":     false,
+		"mqtt.client_id":    false,
+		"mqtt.topic_prefix": false,
 	}
 
 	viperInst *viper.Viper
@@ -87,6 +93,13 @@ func Verify() error {
 	if len(apiKeys) == 0 {
 		return fmt.Errorf("config: api_keys must contain at least one key")
 	}
+	mqttEnabled := viperInst.GetBool("mqtt.enabled")
+	if mqttEnabled {
+		mqttURL := viperInst.GetString("mqtt.url")
+		if mqttURL == "" {
+			return fmt.Errorf("config: mqtt.url must be set when mqtt.enabled is true")
+		}
+	}
 
 	return nil
 }
@@ -131,4 +144,54 @@ func GetClosedPin() int {
 func GetAPIKeys() []string {
 	once.Do(loadConfig)
 	return viperInst.GetStringSlice("api_keys")
+}
+
+// GetMQTTEnabled returns whether MQTT is enabled.
+func GetMQTTEnabled() bool {
+	once.Do(loadConfig)
+	return viperInst.GetBool("mqtt.enabled")
+}
+
+// GetMQTTURL returns the URL for the MQTT broker.
+func GetMQTTURL() string {
+	once.Do(loadConfig)
+	if !viperInst.IsSet("mqtt.url") {
+		return ""
+	}
+	return viperInst.GetString("mqtt.url")
+}
+
+// GetMQTTUsername returns the client ID for the MQTT client.
+func GetMQTTUsername() string {
+	once.Do(loadConfig)
+	if !viperInst.IsSet("mqtt.username") {
+		return ""
+	}
+	return viperInst.GetString("mqtt.username")
+}
+
+// GetMQTTPassword returns the password for the MQTT client.
+func GetMQTTPassword() string {
+	once.Do(loadConfig)
+	if !viperInst.IsSet("mqtt.password") {
+		return ""
+	}
+	return viperInst.GetString("mqtt.password")
+}
+
+// GetMQTTClientID returns the client ID for the MQTT client.
+func GetMQTTClientID() string {
+	once.Do(loadConfig)
+	if !viperInst.IsSet("mqtt.client_id") {
+		return ""
+	}
+	return viperInst.GetString("mqtt.client_id")
+}
+
+func GetMQTTTopicPrefix() string {
+	once.Do(loadConfig)
+	if !viperInst.IsSet("mqtt.topic_prefix") {
+		return ""
+	}
+	return viperInst.GetString("mqtt.topic_prefix")
 }
