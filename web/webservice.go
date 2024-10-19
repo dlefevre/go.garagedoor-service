@@ -15,18 +15,18 @@ import (
 )
 
 var (
-	instance *WebServiceImpl
+	instance *WebService
 	once     sync.Once
 )
 
-// WebServiceImpl is a singleton that encapsulates the web server, and retains a cache of valid API keys.
-type WebServiceImpl struct {
+// WebService is a singleton that encapsulates the web server, and retains a cache of valid API keys.
+type WebService struct {
 	echo    *echo.Echo
 	apiKeys map[string]bool
 }
 
 // GetWebService returns the one and only WebServiceImpl instance.
-func GetWebService() *WebServiceImpl {
+func GetWebService() *WebService {
 	once.Do(func() {
 		instance = newWebService()
 	})
@@ -34,15 +34,15 @@ func GetWebService() *WebServiceImpl {
 }
 
 // Creates a new WebServiceImpl object.
-func newWebService() *WebServiceImpl {
-	return &WebServiceImpl{
+func newWebService() *WebService {
+	return &WebService{
 		echo:    nil,
 		apiKeys: make(map[string]bool),
 	}
 }
 
 // Configure the Echo web server.
-func (s *WebServiceImpl) setUpEcho() {
+func (s *WebService) setUpEcho() {
 	s.echo = echo.New()
 
 	s.echo.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
@@ -63,7 +63,7 @@ func (s *WebServiceImpl) setUpEcho() {
 }
 
 // Start the web server.
-func (s *WebServiceImpl) Start() {
+func (s *WebService) Start() {
 	s.setUpEcho()
 	address := fmt.Sprintf("%s:%d", config.GetBindHost(), config.GetBindPort())
 	go func() {
@@ -74,7 +74,7 @@ func (s *WebServiceImpl) Start() {
 }
 
 // Stop the web server.
-func (s *WebServiceImpl) Stop() {
+func (s *WebService) Stop() {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	if err := s.echo.Shutdown(ctx); err != nil {
@@ -86,7 +86,7 @@ func (s *WebServiceImpl) Stop() {
 
 // Middleware handler to validate the API key. The API key is first matched against an internal
 // cache of valid keys, then against the list of keys in the configuration file.
-func (s *WebServiceImpl) validateAPIKey(next echo.HandlerFunc) echo.HandlerFunc {
+func (s *WebService) validateAPIKey(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		apiKey := c.Request().Header.Get("x-api-key")
 		if s.apiKeys[apiKey] {
