@@ -59,13 +59,16 @@ func TestMQTT(t *testing.T) {
 	if !GetMQTTEnabled() {
 		t.Fatalf("Expected MQTT to be enabled")
 	}
-	if GetMQTTURL() != "mqtt://mqtt.eclipseprojects.io:1883" {
-		t.Fatalf("Expected MQTT URL to be mqtt://mqtt.eclipseprojects.io:1883, got %s", GetMQTTURL())
+	if GetMQTTURL() != "mqtt://127.0.0.1:1883" {
+		t.Fatalf("Expected MQTT URL to be mqtt://127.0.0.1:1883, got %s", GetMQTTURL())
 	}
 	if GetMQTTClientID() != "garage_door" {
 		t.Fatalf("Expected MQTT client ID to be garage_door, got %s", GetMQTTClientID())
 	}
-	if GetMQTTTopicPrefix() != "/homeassistant/" {
-		t.Fatalf("Expected MQTT topic prefix to be /homeassistant/, got %s", GetMQTTTopicPrefix())
+	if GetMQTTDiscoveryPrefix() != "homeassistant" {
+		t.Fatalf("Expected MQTT topic prefix to be 'homeassistant', got %s", GetMQTTDiscoveryPrefix())
+	}
+	if GetMQTTObjectID() != "garage_door" {
+		t.Fatalf("Expected MQTT object ID to be 'garage_door', got %s", GetMQTTObjectID())
 	}
 }

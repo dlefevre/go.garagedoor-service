@@ -15,8 +15,11 @@ gpio:
 mqtt:
   enabled: true
   client_id: garage_door
-  topic_prefix: /homeassistant/
-  url: mqtt://mqtt.eclipseprojects.io:1883
+  discovery_prefix: homeassistant
+  object_id: garage_door
+  url: mqtt://127.0.0.1:1883
+  username: "test"
+  password: "test"
 
 # bcrypt hashed api keys.
 # Use the following command to generate a new hash:

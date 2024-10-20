@@ -11,19 +11,20 @@ import (
 var (
 	// All known configuration properties, and weither they are mandatory or not
 	knownKeys = map[string]bool{
-		"mode":              true,
-		"bind.port":         true,
-		"bind.host":         true,
-		"gpio.toggle_pin":   true,
-		"gpio.open_pin":     true,
-		"gpio.closed_pin":   true,
-		"api_keys":          true,
-		"mqtt.enabled":      true,
-		"mqtt.url":          false,
-		"mqtt.username":     false,
-		"mqtt.password":     false,
-		"mqtt.client_id":    false,
-		"mqtt.topic_prefix": false,
+		"mode":                  true,
+		"bind.port":             true,
+		"bind.host":             true,
+		"gpio.toggle_pin":       true,
+		"gpio.open_pin":         true,
+		"gpio.closed_pin":       true,
+		"api_keys":              true,
+		"mqtt.enabled":          true,
+		"mqtt.url":              false,
+		"mqtt.username":         false,
+		"mqtt.password":         false,
+		"mqtt.client_id":        false,
+		"mqtt.discovery_prefix": false,
+		"mqtt.object_id":        false,
 	}
 
 	viperInst *viper.Viper
@@ -98,6 +99,18 @@ func Verify() error {
 		mqttURL := viperInst.GetString("mqtt.url")
 		if mqttURL == "" {
 			return fmt.Errorf("config: mqtt.url must be set when mqtt.enabled is true")
+		}
+		if viperInst.GetString("mqtt.client_id") == "" {
+			return fmt.Errorf("config: mqtt.client_id must be set when mqtt.enabled is true")
+		}
+		if viperInst.GetString("mqtt.discovery_prefix") == "" {
+			return fmt.Errorf("config: mqtt.discovery_prefix must be set when mqtt.enabled is true")
+		}
+		if viperInst.GetString("mqtt.object_id") == "" {
+			return fmt.Errorf("config: mqtt.object_id must be set when mqtt.enabled is true")
+		}
+		if viperInst.GetString("mqtt.username") != "" && viperInst.GetString("mqtt.password") == "" {
+			return fmt.Errorf("config: mqtt.password must be set when mqtt.username is set")
 		}
 	}
 
@@ -188,10 +201,20 @@ func GetMQTTClientID() string {
 	return viperInst.GetString("mqtt.client_id")
 }
 
-func GetMQTTTopicPrefix() string {
+// GetMQTTDiscoveryPrefix returns the discovery prefix for the MQTT client.
+func GetMQTTDiscoveryPrefix() string {
 	once.Do(loadConfig)
-	if !viperInst.IsSet("mqtt.topic_prefix") {
+	if !viperInst.IsSet("mqtt.discovery_prefix") {
 		return ""
 	}
-	return viperInst.GetString("mqtt.topic_prefix")
+	return viperInst.GetString("mqtt.discovery_prefix")
+}
+
+// GetMQTTObjectID returns the object ID for the MQTT client.
+func GetMQTTObjectID() string {
+	once.Do(loadConfig)
+	if !viperInst.IsSet("mqtt.object_id") {
+		return ""
+	}
+	return viperInst.GetString("mqtt.object_id")
 }
