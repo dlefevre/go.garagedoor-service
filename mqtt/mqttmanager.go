@@ -97,8 +97,8 @@ func (s *MQTTManager) connectHandler(cm *autopaho.ConnectionManager, connAck *pa
 	}
 	log.Info().Msgf("subscribed to MQTT topic: %s", s.actionTopic)
 
-	s.sendHomeAssistantAutodiscoveryPayload()
 	s.registerStateListener()
+	s.sendHomeAssistantAutodiscoveryPayload()
 }
 
 func (s *MQTTManager) connectErrorHandler(err error) {
