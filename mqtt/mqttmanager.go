@@ -99,6 +99,11 @@ func (s *MQTTManager) connectHandler(cm *autopaho.ConnectionManager, connAck *pa
 
 	s.registerStateListener()
 	s.sendHomeAssistantAutodiscoveryPayload()
+
+	go func() {
+		time.Sleep(5 * time.Second)
+		controller.GetDoorControllerService().RequestState()
+	}()
 }
 
 func (s *MQTTManager) connectErrorHandler(err error) {
@@ -144,6 +149,9 @@ func (s *MQTTManager) registerStateListener() {
 		dc.RemoveStateListener(s.listenerId)
 	}
 	s.listenerId = dc.AddStateListener(func(state string) {
+		if state == "unknown" {
+			state = "open"
+		}
 		message := &paho.Publish{
 			Topic:   s.stateTopic,
 			Payload: []byte(state),
