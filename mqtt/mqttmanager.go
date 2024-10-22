@@ -170,14 +170,6 @@ func (s *MQTTManager) registerStateListener() {
 }
 
 func (s *MQTTManager) sendHomeAssistantAutodiscoveryPayload() {
-	iconTemplate := "{% if is_state(\"binary_sensor.voordeur_contact\", \"on\") %}\n" +
-		"mdi:garage-open-variant\n" +
-		"{% elif is_state(\"binary_sensor.voordeur_slot\", \"off\") %}\n" +
-		"mdi:garage-variant\n" +
-		"{% else %}\n" +
-		"mdi:garage-alert-variant\n" +
-		"{% endif %}"
-
 	// Define the autodiscovery payload
 	payload := map[string]interface{}{
 		"name":          "Garage Door",
@@ -189,7 +181,8 @@ func (s *MQTTManager) sendHomeAssistantAutodiscoveryPayload() {
 		"state_open":    "open",
 		"state_closed":  "closed",
 		"unique_id":     config.GetMQTTObjectID(),
-		"icon":          iconTemplate,
+		"object_id":     config.GetMQTTObjectID(),
+		"icon":          "mdi:garage-variant",
 		"device": map[string]interface{}{
 			"identifiers":  config.GetMQTTObjectID(),
 			"name":         "Garage Door",
