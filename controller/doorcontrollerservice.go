@@ -24,9 +24,10 @@ const (
 
 // Enumeration of states.
 const (
-	StateOpen    Enum = iota // StateOpen represents the open state
-	StateClosed              // StateClosed represents the closed state
-	StateUnknown             // StateUnknown represents the unknown state
+	StateOpen          Enum = iota // StateOpen represents the open state
+	StateClosed                    // StateClosed represents the closed state
+	StateUnknown                   // StateUnknown represents the unknown state
+	StateUninitialized             // StateUninitialized represents the uninitialized state
 )
 
 var (
@@ -58,7 +59,7 @@ func newDoorControllerService() *DoorControllerService {
 	return &DoorControllerService{
 		command:        nil,
 		stateListeners: make(map[uuid.UUID]func(string)),
-		state:          StateUnknown,
+		state:          StateUninitialized,
 		lock:           sync.RWMutex{},
 		adapter:        gpio.GetGPIOAdapter(),
 		wg:             sync.WaitGroup{},
@@ -148,6 +149,11 @@ func (d *DoorControllerService) RequestState() {
 // GetStateStr returns a string representation of the current state.
 func (d *DoorControllerService) GetStateStr() string {
 	return d.stateStr()
+}
+
+// Ready checks if the component is running and the state has been updated with a proper value.
+func (d *DoorControllerService) Ready() bool {
+	return d.running && d.state != StateUninitialized
 }
 
 // AddStateListener adds a listerer for state changes. When added, no initial state is sent.

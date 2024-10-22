@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/url"
 	"sync"
+	"time"
 
 	"github.com/dlefevre/go.garagedoor-service/config"
 	"github.com/dlefevre/go.garagedoor-service/controller"
@@ -154,6 +155,16 @@ func (s *MQTTManager) registerStateListener() {
 			log.Trace().Msgf("published state '%s' to MQTT topic: %s", state, s.stateTopic)
 		}
 	})
+
+	// Delay the initial state update to ensure pins are at least read once.
+	for i := 0; !dc.Ready(); i++ {
+		time.Sleep(100 * time.Millisecond)
+		if i > 50 {
+			log.Warn().Msg("initial state update delayed too long")
+			break
+		}
+	}
+
 	dc.RequestState()
 	log.Info().Msgf("registered state listener for MQTT topic: %s", s.stateTopic)
 }
