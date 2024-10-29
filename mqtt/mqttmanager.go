@@ -156,6 +156,7 @@ func (s *MQTTManager) registerStateListener() {
 			Topic:   s.stateTopic,
 			Payload: []byte(state),
 			QoS:     1,
+			Retain:  true,
 		}
 		if _, err := s.connectionManager.Publish(context.Background(), message); err != nil {
 			log.Error().Msgf("failed to publish state (%s): %v", state, err)
