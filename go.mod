@@ -6,7 +6,7 @@ require (
 	github.com/eclipse/paho.golang v0.21.0
 	github.com/google/uuid v1.6.0
 	github.com/labstack/echo/v4 v4.12.0
-	github.com/mochi-mqtt/server/v2 v2.6.5
+	github.com/mochi-mqtt/server/v2 v2.6.6
 	github.com/rs/zerolog v1.33.0
 	github.com/spf13/viper v1.19.0
 	github.com/stianeikeland/go-rpio/v4 v4.6.0
