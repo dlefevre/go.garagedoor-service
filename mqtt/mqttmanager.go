@@ -211,6 +211,7 @@ func (s *MQTTManager) sendHomeAssistantAutodiscoveryPayload() {
 		Topic:   s.autoDiscoveryTopic,
 		Payload: payloadBytes,
 		QoS:     1,
+		Retain:  true,
 	}
 	if _, err := s.connectionManager.Publish(context.Background(), message); err != nil {
 		log.Error().Msgf("failed to publish autodiscovery payload: %v", err)
