@@ -5,13 +5,13 @@ go 1.23.0
 require (
 	github.com/eclipse/paho.golang v0.22.0
 	github.com/google/uuid v1.6.0
-	github.com/labstack/echo/v4 v4.13.2
+	github.com/labstack/echo/v4 v4.13.3
 	github.com/mochi-mqtt/server/v2 v2.6.6
 	github.com/rs/zerolog v1.33.0
 	github.com/spf13/viper v1.19.0
 	github.com/stianeikeland/go-rpio/v4 v4.6.0
 	golang.org/x/crypto v0.31.0
-	golang.org/x/net v0.32.0
+	golang.org/x/net v0.33.0
 )
 
 require (
