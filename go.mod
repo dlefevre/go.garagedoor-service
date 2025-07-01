@@ -11,7 +11,7 @@ require (
 	github.com/spf13/viper v1.20.1
 	github.com/stianeikeland/go-rpio/v4 v4.6.0
 	golang.org/x/crypto v0.39.0
-	golang.org/x/net v0.39.0
+	golang.org/x/net v0.41.0
 )
 
 require (
